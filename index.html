@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Live Weather Updates</title>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="search">
+            <div class="textBox">
+                <input type="text" id="placeName" placeholder="Enter City Name">
+                <button><img src="images/search.png"></button>
+            </div>
+        </div>
+        <div class="weather">
+            <img src="images/clear.png" class="weather-update">
+            <h1 class="temperature">25°C</h1>
+            <h2 class="townName">London</h2>
+
+            <div class="more">
+                <div class="col">
+                    <img src="images/humidity.png">
+                    <div>
+                        <p class="humidity">40%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/wind.png">
+                    <div>
+                        <p class="wind">40%</p>
+                        <p>wind</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+
+    $(".search button").on("click", function () {
+        var place = $("#placeName").val();
+        weatherUpdates(place);
+        $(".weather").css("display", "block");
+    });
+
+
+
+    $(".search #placeName").keypress(function (e) {
+        var city = $("#placeName").val();
+        key = e.which
+        if (key == 13) {
+            weatherUpdates(city);
+            console.log(city);
+            $(".weather").css("display", "block");
+        }
+
+    });
+
+    const api = "3ee6e6ce57ed5784308816f99e9aa58a";
+    const url = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+    var weatherStatus = $(".weather-update");
+
+    async function weatherUpdates(place) {
+        const response = await fetch(url + place + '&appid=' + api);
+        var data = await response.json();
+        console.log(data);
+
+        $(".townName").html(data.name);
+        $(".temperature").text(Math.round(data.main.temp) + "°C");
+        $(".humidity").text(data.main.humidity + "%");
+        $(".wind").text(Math.round(data.wind.speed) + "km/h");
+
+
+
+        if (data.weather[0].main == "Rain") {
+            weatherStatus.attr("src", "images/rain.png");
+        }
+        else if (data.weather[0].main == "Clouds") {
+            weatherStatus.attr("src", "images/clouds.png");
+        }
+        else if (data.weather[0].main == "clear.png") {
+            weatherStatus.attr("src", "images/clear.png");
+        }
+        else if (data.weather[0].main == "Snow") {
+            weatherStatus.attr("src", "snow.png");
+        }
+    }
+
+
+
+</script>
+
+</html>
